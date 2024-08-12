@@ -207,7 +207,7 @@ impl Settings {
     }
 
     pub fn view(&self) -> Element<Message> {
-        let mut elements = row!().spacing(8);
+        let mut elements = column!().spacing(8).align_items(iced::Alignment::Center);
 
         if self
             .idle_inhibitor
@@ -223,9 +223,7 @@ impl Settings {
             }));
         }
 
-        if let Some(powerprofiles_indicator) =
-            self.powerprofiles.indicator()
-        {
+        if let Some(powerprofiles_indicator) = self.powerprofiles.indicator() {
             elements = elements.push(powerprofiles_indicator);
         }
 
@@ -233,11 +231,8 @@ impl Settings {
             elements = elements.push(sink_indicator);
         }
 
-        let mut net_elements = row!().spacing(4);
-        if let Some(indicator) = self
-            .net
-            .active_connection_indicator()
-        {
+        let mut net_elements = column!().spacing(4);
+        if let Some(indicator) = self.net.active_connection_indicator() {
             net_elements = net_elements.push(indicator);
         }
 
@@ -252,8 +247,7 @@ impl Settings {
         }
 
         button(elements)
-            .style(Button::custom(HeaderButtonStyle::Right))
-            .padding([2, 8])
+            .style(Button::custom(HeaderButtonStyle::Full))
             .on_press(Message::ToggleMenu)
             .into()
     }
@@ -426,12 +420,12 @@ fn quick_settings_section<'a>(
 
 fn sub_menu_wrapper<'a, Msg: 'static>(content: impl Into<Element<'a, Msg>>) -> Element<'a, Msg> {
     container(content.into())
-        .style(|theme: &Theme| iced::widget::container::Appearance {
-            background: iced::Background::Color(theme.extended_palette().secondary.strong.color)
-                .into(),
-            border: Border::with_radius(16),
-            ..iced::widget::container::Appearance::default()
-        })
+        //.style(|theme: &Theme| iced::widget::container::Appearance {
+        //    //background: iced::Background::Color(theme.extended_palette().secondary.strong.color)
+        //        .into(),
+        //    //border: Border::with_radius(16),
+        //    ..iced::widget::container::Appearance::default()
+        //})
         .padding(8)
         .width(Length::Fill)
         .into()

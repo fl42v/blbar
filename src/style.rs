@@ -1,9 +1,9 @@
+use crate::config::Appearance;
 use iced::{
     theme::{palette, Palette},
     widget::button,
     Border, Theme,
 };
-use crate::config::Appearance;
 
 pub fn ashell_theme(appearance: &Appearance) -> Theme {
     Theme::custom_with_fn(
@@ -114,9 +114,10 @@ pub fn header_pills(theme: &Theme) -> iced::widget::container::Appearance {
     iced::widget::container::Appearance {
         background: Some(palette.background.into()),
         border: Border {
-            width: 0.0,
-            radius: 12.0.into(),
-            color: iced::Color::TRANSPARENT,
+            width: 2.0,
+            //radius: 36.0.into(),
+            radius: 10.0.into(),
+            color: iced::Color::WHITE,
         },
         text_color: Some(palette.text),
         ..Default::default()

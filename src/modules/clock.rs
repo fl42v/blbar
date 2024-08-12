@@ -1,7 +1,6 @@
-use crate::style::left_header_pills;
 use chrono::{DateTime, Local};
 use iced::{
-    widget::{container, text},
+    widget::{column, container, text},
     Element,
 };
 use std::time::Duration;
@@ -28,11 +27,13 @@ impl Clock {
         }
     }
 
-    pub fn view(&self, format: &str) -> Element<Message> {
-        container(text(self.date.format(format).to_string()))
-            .padding([2, 8])
-            .style(left_header_pills)
-            .into()
+    pub fn view(&self, _format: &str) -> Element<Message> {
+        column![
+            text(self.date.format("%H").to_string()),
+            text(self.date.format("%I").to_string()),
+        ]
+        .padding([0, 0, 0, 2])
+        .into()
     }
 
     pub fn subscription(&self) -> iced::Subscription<Message> {

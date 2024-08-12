@@ -1,8 +1,19 @@
-# Ashell
+# blbar
 
-Barely customizable Wayland status bar for Hyprland compositor. 
+Even less customizable Wayland status bar for Hyprland. 
 
-WIP, highly unstable
+## Quick summary of changes against upstream
+- went back to `b8b709c` since the latter branches seem to break transparency
+- made it vertical
+- removed a few arch-specific modules, rearranged the others
+- made the bar solid (as opposed to 3 separate bars for left center and right)
+- also, flake now works
+
+## Screens_now
+![sh1](./screenshots/sh1.png)
+![sh2](./screenshots/sh2.png)
+
+# Orig readme next
 
 ### Does it only work on Hyprland?
 While it's currently tailored for Hyprland, it could work with other compositors. 

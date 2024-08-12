@@ -25,7 +25,7 @@ mod password_dialog;
 mod style;
 mod utils;
 
-const HEIGHT: u32 = 34;
+const HEIGHT: u32 = 50;
 
 fn get_log_spec(log_level: LevelFilter) -> LogSpecification {
     LogSpecBuilder::new()
@@ -74,16 +74,17 @@ async fn main() {
             keyboard_interactivity: KeyboardInteractivity::None,
             namespace: "ashell".into(),
             layer: Layer::Top,
-            size: Some((None, Some(HEIGHT))),
-            anchor: Anchor::TOP.union(Anchor::LEFT).union(Anchor::RIGHT),
+            size: Some((Some(HEIGHT), None)),
+            anchor: Anchor::TOP.union(Anchor::LEFT).union(Anchor::BOTTOM),
             exclusive_zone: HEIGHT as i32,
             ..Default::default()
         }),
-        flags: (logger, config),
+        flags: (/*logger,*/config),
         id: None,
-        fonts: Default::default(),
-        default_font: Font::default(),
-        default_text_size: 14.into(),
+        //fonts: Default::default(),
+        //default_font: Font::default(),
+        //default_text_size: 18.into(),
+        ..Settings::default()
     })
     .unwrap();
 }

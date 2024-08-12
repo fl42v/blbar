@@ -1,5 +1,4 @@
 use crate::{
-    centerbox,
     config::{self, Config},
     get_log_spec,
     menu::{menu_wrapper, Menu, MenuType},
@@ -12,13 +11,15 @@ use crate::{
 };
 use flexi_logger::LoggerHandle;
 use iced::{
-    widget::{row, Row},
+    widget::{column, container, row, Column, Row, Space},
     window::Id,
     Alignment, Application, Color, Length, Theme,
 };
 
+use crate::style::header_pills;
+
 pub struct App {
-    logger: LoggerHandle,
+    //logger: LoggerHandle,
     config: Config,
     menu: Menu,
     updates: Updates,
@@ -49,12 +50,12 @@ impl Application for App {
     type Executor = iced::executor::Default;
     type Theme = Theme;
     type Message = Message;
-    type Flags = (LoggerHandle, Config);
+    type Flags = (Config);
 
-    fn new((logger, config): (LoggerHandle, Config)) -> (Self, iced::Command<Self::Message>) {
+    fn new((config): (Config)) -> (Self, iced::Command<Self::Message>) {
         (
             App {
-                logger,
+                //logger,
                 config,
                 menu: Menu::init(),
                 updates: Updates::new(),
@@ -77,6 +78,7 @@ impl Application for App {
         fn dark_background(theme: &Theme) -> iced::wayland::Appearance {
             iced::wayland::Appearance {
                 background_color: Color::TRANSPARENT,
+                //background_color: Color::WHITE,
                 text_color: theme.palette().text,
                 icon_color: theme.palette().text,
             }
@@ -95,8 +97,8 @@ impl Application for App {
             Message::ConfigChanged(config) => {
                 log::info!("New config: {:?}", config);
                 self.config = *config;
-                self.logger
-                    .set_new_spec(get_log_spec(self.config.log_level));
+                //self.logger
+                //    .set_new_spec(get_log_spec(self.config.log_level));
                 iced::Command::none()
             }
             Message::CloseMenu => self.menu.close(),
@@ -159,82 +161,76 @@ impl Application for App {
                     match menu_type {
                         MenuType::Updates => crate::menu::MenuPosition::Left,
                         MenuType::Privacy => crate::menu::MenuPosition::Right,
-                        MenuType::Settings => crate::menu::MenuPosition::Right,
+                        MenuType::Settings => crate::menu::MenuPosition::Left,
                     },
                 )
             } else {
                 row!().into()
             }
         } else {
-            let left = Row::with_children(
-                vec![
-                    self.config
-                        .app_launcher_cmd
-                        .as_ref()
-                        .map(|_| launcher::launcher()),
-                    self.config
-                        .updates
-                        .as_ref()
-                        .map(|_| self.updates.view().map(Message::Updates)),
-                    Some(
-                        self.workspaces
-                            .view(&self.config.appearance.workspace_colors)
-                            .map(Message::Workspaces),
-                    ),
-                ]
-                .into_iter()
-                .flatten()
-                .collect::<Vec<_>>(),
-            )
-            .height(Length::Shrink)
-            .align_items(Alignment::Center)
-            .spacing(4);
-
-            let mut center = row!().spacing(4);
-            if let Some(title) = self.window_title.view() {
-                center = center.push(title.map(Message::Title));
+            let mut left = column!().spacing(4).padding([8, 8, 8, 12]);
+            if let Some(sysinfo) = self.system_info.view(&self.config.system) {
+                left = left.push(sysinfo.map(Message::SystemInfo));
             }
 
-            let right = Row::with_children(
-                vec![
-                    self.system_info
-                        .view(&self.config.system)
-                        .map(|c| c.map(Message::SystemInfo)),
-                    Some(
-                        Row::with_children(
-                            vec![
-                                Some(
-                                    self.clock
-                                        .view(&self.config.clock.format)
-                                        .map(Message::Clock),
-                                ),
-                                if self.privacy.applications.is_empty() {
-                                    None
-                                } else {
-                                    Some(self.privacy.view().map(Message::Privacy))
-                                },
-                                Some(self.settings.view().map(Message::Settings)),
-                            ]
-                            .into_iter()
-                            .flatten()
-                            .collect::<Vec<_>>(),
-                        )
-                        .into(),
-                    ),
-                ]
+            let mut center = column!().spacing(4).padding(8);
+            center = center.push(
+                self.workspaces
+                    .view(&self.config.appearance.workspace_colors)
+                    .map(Message::Workspaces),
+            );
+
+            let right = Column::with_children(
+                vec![Some(
+                    Column::with_children(
+                        vec![
+                            Some(
+                                self.clock
+                                    .view(&self.config.clock.format)
+                                    .map(Message::Clock),
+                            ),
+                            if self.privacy.applications.is_empty() {
+                                None
+                            } else {
+                                Some(self.privacy.view().map(Message::Privacy))
+                            },
+                            Some(self.settings.view().map(Message::Settings)),
+                        ]
+                        .into_iter()
+                        .flatten()
+                        .collect::<Vec<_>>(),
+                    )
+                    .padding(8)
+                    .into(),
+                )]
                 .into_iter()
                 .flatten()
                 .collect::<Vec<_>>(),
             )
+            .align_items(iced::Alignment::Center)
             .spacing(4);
 
-            centerbox::Centerbox::new([left.into(), center.into(), right.into()])
-                .spacing(4)
-                .padding([0, 4])
-                .width(Length::Fill)
-                .height(Length::Fixed(HEIGHT as f32))
-                .align_items(Alignment::Center)
-                .into()
+            container(
+                container(
+                    column![
+                        //container(left).style(header_pills),
+                        //Space::with_height(Length::Fill),
+                        //container(center).style(header_pills),
+                        //Space::with_height(Length::Fill),
+                        //container(right).style(header_pills),
+                        left,
+                        Space::with_height(Length::Fill),
+                        center,
+                        Space::with_height(Length::Fill),
+                        right,
+                    ]
+                    .align_items(iced::Alignment::Center),
+                )
+                .padding([5, 0, 5, 0])
+                .style(header_pills),
+            )
+            .padding([10, 0, 10, 10])
+            .into()
         }
     }
 

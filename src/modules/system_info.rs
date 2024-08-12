@@ -1,11 +1,10 @@
 use crate::{
     components::icons::{icon, Icons},
     config::SystemModuleConfig,
-    style::header_pills,
 };
 use iced::{
-    widget::{container, row, text},
-    Element, Theme,
+    widget::{column, container, row, text},
+    Element, Length, Theme,
 };
 use std::time::Duration;
 use sysinfo::{Components, System};
@@ -91,9 +90,11 @@ impl SystemInfo {
             let temp_alert_threshold = config.temp_alert_threshold;
             Some(
                 container(
-                    row!(
+                    column!(
                         container(
-                            row!(icon(Icons::Cpu), text(format!("{}%", cpu_usage))).spacing(4)
+                            column!(icon(Icons::Cpu), text(format!("{}", cpu_usage)))
+                                .spacing(4)
+                                .align_items(iced::Alignment::Center),
                         )
                         .style(move |theme: &Theme| {
                             container::Appearance {
@@ -110,7 +111,9 @@ impl SystemInfo {
                             }
                         }),
                         container(
-                            row!(icon(Icons::Mem), text(format!("{}%", memory_usage))).spacing(4)
+                            column!(icon(Icons::Mem), text(format!("{}", memory_usage)))
+                                .spacing(4)
+                                .align_items(iced::Alignment::Center),
                         )
                         .style(move |theme: &Theme| {
                             container::Appearance {
@@ -127,7 +130,9 @@ impl SystemInfo {
                             }
                         }),
                         container(
-                            row!(icon(Icons::Temp), text(format!("{}°", temperature))).spacing(4)
+                            column!(icon(Icons::Temp), text(format!("{}", temperature)))
+                                .spacing(4)
+                                .align_items(iced::Alignment::Center),
                         )
                         .style(move |theme: &Theme| {
                             container::Appearance {
@@ -148,8 +153,8 @@ impl SystemInfo {
                     .spacing(4),
                 )
                 .align_y(iced::alignment::Vertical::Center)
-                .padding([2, 7])
-                .style(header_pills)
+                .width(Length::Fill)
+                //.padding([2, 7])
                 .into(),
             )
         }

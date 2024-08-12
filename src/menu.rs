@@ -176,9 +176,10 @@ pub fn menu_wrapper(
                     .style(|theme: &Theme| iced::widget::container::Appearance {
                         background: Some(theme.palette().background.into()),
                         border: Border {
-                            color: theme.extended_palette().secondary.base.color,
-                            width: 1.,
-                            radius: 16.0.into(),
+                            //color: theme.extended_palette().secondary.base.color,
+                            color: iced::Color::WHITE,
+                            width: 2.,
+                            radius: 10.0.into(),
                         },
                         ..Default::default()
                     }),
@@ -189,6 +190,7 @@ pub fn menu_wrapper(
             MenuPosition::Left => iced::alignment::Horizontal::Left,
             MenuPosition::Right => iced::alignment::Horizontal::Right,
         })
+        .align_y(iced::alignment::Vertical::Bottom)
         .padding([0, 8, 8, 8])
         .width(iced::Length::Fill)
         .height(iced::Length::Fill),
